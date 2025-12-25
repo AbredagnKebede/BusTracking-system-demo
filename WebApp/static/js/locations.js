@@ -2,33 +2,11 @@ let startingpointdatalist = document.getElementById('startingpointdatalist')
 let startingpoint = document.getElementById('startingpoint')
 let destinationpointdatalist = document.getElementById('destinationpointdatalist')
 let destinationpoint = document.getElementById('destinationpoint')
-let longitude = 0;
-let latitude = 0;
 
-function showPosition(position) {
-    longitude = position.coords.longitude;
-    latitude = position.coords.latitude;
-
-    let startpoint = document.getElementById("startingpointdatalist");
-    // let option = document.createElement('option')
-    // option.textContent = "My Location"
-    let mylocation = startingpointdatalist.options[0].value;
-    console.log(mylocation)
-    let data = latitude.toString()+ "," +longitude.toString();
-    startingpointdatalist.options[0].value = data;
-    destinationpointdatalist.options[0].value = data;
-    
-    console.log(data)
-}
+// GPS functionality removed - users must select from predefined bus stops
 document.addEventListener('DOMContentLoaded', (event) => {
-    
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-        document.getElementById('startingpoint').disabled = false;
-      } else {
-        console.log('No GPS Data');
-        document.getElementById('startingpoint').disabled = false;
-      }
+    document.getElementById('startingpoint').disabled = false;
+    document.getElementById('destinationpoint').disabled = false;
 })
 
 document.getElementById('destinationpoint').addEventListener("change", startigpoint(this.value));

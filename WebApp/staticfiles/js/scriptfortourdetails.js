@@ -24,7 +24,7 @@ const icon = "https://developers.google.com/maps/documentation/javascript/exampl
 function initMap(device_latitude, device_longitude, latitude, longitude) {
 
     let location = { lat: device_latitude, lng: device_longitude };
-    let other_location = { lat: 6.044198 , lng: 80.241 };
+    let other_location = { lat: 9.1450 , lng: 38.7667 };
     console.log(other_location);
     const map = new google.maps.Map(document.getElementById("map"), {
         zoom: 10,

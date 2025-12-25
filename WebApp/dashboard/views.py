@@ -51,30 +51,36 @@ def frontpage(request):
 
 def gettinglocations(request):
     getting_data = Locations.objects.all()
+    error_message = None
+    
     if request.method == "POST":
-        starting_point = request.POST['startingpoint']
-        destination_point = request.POST['destinationpoint']
+        starting_point = request.POST.get('startingpoint', '')
+        destination_point = request.POST.get('destinationpoint', '')
         
         print("Starting Point :",starting_point)
         print("destination Point :",destination_point)
        
-        extract_location = getextractlocation(starting_point,destination_point)
-        new_data = Statics_Searching()
-        new_data.starting_point = extract_location["starting_point"]
-        new_data.destination_point = extract_location["destination_point"]
-        new_data.starting_point_to_destination_point = extract_location["startingpointtodestination"]
-        new_data.route_number = extract_location["route_number"]
-        new_data.user_location = extract_location["userlocation"]
-        new_data.startcoordinates = extract_location["startcoordinates"]
-        new_data.endcoordinates = extract_location["endcoordinates"]
-        new_data.needdirections = extract_location["needdirections"]
-        new_data.save()
-        return redirect('available-shedules',new_data.key_id)
+        try:
+            extract_location = getextractlocation(starting_point,destination_point)
+            new_data = Statics_Searching()
+            new_data.starting_point = extract_location["starting_point"]
+            new_data.destination_point = extract_location["destination_point"]
+            new_data.starting_point_to_destination_point = extract_location["startingpointtodestination"]
+            new_data.route_number = extract_location["route_number"]
+            new_data.user_location = extract_location["userlocation"]
+            new_data.startcoordinates = extract_location["startcoordinates"]
+            new_data.endcoordinates = extract_location["endcoordinates"]
+            new_data.needdirections = extract_location["needdirections"]
+            new_data.save()
+            return redirect('available-shedules',new_data.key_id)
+        except ValueError as e:
+            error_message = str(e)
+            print(f"Error: {error_message}")
+        except Exception as e:
+            error_message = "An error occurred. Please make sure you selected valid bus stops from the list."
+            print(f"Error: {e}")
 
-    else:
-        print("data not valid")
-    
-    return render(request,'locations.html',{"form":getting_data})
+    return render(request,'locations.html',{"form":getting_data, "error_message":error_message})
 
 
 def survey(request):

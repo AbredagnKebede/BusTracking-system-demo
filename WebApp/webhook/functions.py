@@ -4,19 +4,8 @@ from .models import Buses,Shedule
 from datetime import datetime
 import pytz
 from dashboard.models import Locations,Location_Order
-from geopy import distance
-distance_between_nearest_locations = []
-next_and_last = {}
-def distance_Calc(coords_1,coords_2): 
-    
-    distance_varivle = str(distance.distance(coords_1, coords_2)).split(".")
-    if (distance_varivle[1][-6:-5] == "-"):
-        strings = "0.00"
-    else:
-        strings = distance_varivle[0]+ "."+ str(distance_varivle[1])[:4]
-    return round(float(strings),2)
 
-TIME_ZONE = 'Asia/Kolkata'
+TIME_ZONE = 'Africa/Addis_Ababa'
 
 
 def time_calculater_for_js(time_of_data): 
@@ -58,59 +47,6 @@ def finding_nearest_shedule(bus_id):
     print("nearest sheduled time ",time_travel[1])
     return f"{nearest_time_and_bus}/{differance}"
 
-def find_last_and_next_locations(coordinates,route_number):
-   
-    distance_list = []
-    distance_list_names = []
-    all_locations = Locations.objects.all()
-    for location in all_locations:
-        currenT_coordinates = location.geographic_location    
-        latitude,longitude = currenT_coordinates.split(",")
-        currenT_coordinates = (float(latitude),float(longitude))
-        distance_list.append(float(distance_Calc(coordinates,currenT_coordinates)))
-        distance_list_names.append(location.name)
-   
-    distance_list_unsoted = [x for x in distance_list]
-    distance_list.sort()
-    nearest_location_1 = distance_list_names[distance_list_unsoted.index(distance_list[0])]
-    nearest_location_2 = distance_list_names[distance_list_unsoted.index(distance_list[1])]
-
-    locations_order_object = Location_Order.objects.get(route_number=route_number).list_of_locations.split(",")
-    index_of_nearest_location = locations_order_object.index(nearest_location_1)
-   
-    if index_of_nearest_location == 0 :
-        before_location = locations_order_object[0]
-        next_location = locations_order_object[2] 
-    elif index_of_nearest_location == 44:
-        next_location = locations_order_object[44]
-        before_location = locations_order_object[42]
-    else:
-        before_location = locations_order_object[index_of_nearest_location - 1]
-        next_location = locations_order_object[index_of_nearest_location + 1]
-    
-    location_before = {"name":before_location,"distance":distance_list_unsoted[locations_order_object.index(before_location)]}
-    location_next = { "name":next_location,"distance":distance_list_unsoted[locations_order_object.index(next_location)]}
-    current_location = {"name":nearest_location_1,"distance":distance_list[0]}
-    location_two = {"location_before":location_before,"location_next":location_next,"location":current_location}
-    distance_between_nearest_locations.append(location_two)
-    print("nearest bus stand :",current_location)
-    
-    if len(distance_between_nearest_locations)>4:
-        last_data_location_before = distance_between_nearest_locations[0]["location_before"]["distance"]
-        last_data_location_next = distance_between_nearest_locations[0]["location_next"]["distance"]
-        new_data_location_before = distance_between_nearest_locations[3]["location_before"]["distance"]
-        new_data_location_next = distance_between_nearest_locations[3]["location_next"]["distance"]
-        last_current_location = distance_between_nearest_locations[0]["location"]["distance"]
-        new_data_current_location = distance_between_nearest_locations[3]["location"]["distance"]
-
-        if last_current_location < new_data_current_location :
-            next_and_last.update({"next_location":distance_between_nearest_locations[0]["location"]["name"],"last_location":distance_between_nearest_locations[0]["location_before"]["name"],"Started":True})
-        elif new_data_current_location < last_current_location :
-            next_and_last.update({"next_location":distance_between_nearest_locations[0]["location_next"]["name"],"last_location":distance_between_nearest_locations[0]["location"]["name"],"Started":True})
-        else:
-            next_and_last.update({"next_location":"Not -Yet startted","last_location":"Not -Yet startted","Started":False})
-        distance_between_nearest_locations.pop(0)
-        
-    return next_and_last
+# GPS-based location finding removed - now handled in views.py using bus stop names
     
    

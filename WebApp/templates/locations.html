@@ -24,6 +24,11 @@
                 <span>Getting Locations</span>
             </div>
             <div class="line"></div>
+            {% if error_message %}
+            <div style="color: red; padding: 10px; margin-bottom: 10px; background-color: #ffe6e6; border-radius: 5px;">
+                {{ error_message }}
+            </div>
+            {% endif %}
             <form action="" method="POST">
                 {% csrf_token %}
             <div class="starting-point">
@@ -42,7 +47,6 @@
                     <!-- Its important that you keep list attribute empty to hide the default dropdown icon and the browser's default datalist -->
 
                     <datalist id="startingpointdatalist" role="listbox"  class="starting-point-datalist" >
-                        <option value="My Location">My Location</option>
                         {% for item in form %} 
                         <option value="{{item.name}}">{{item.name}}</option>
                         {% endfor %}
@@ -64,7 +68,6 @@
                     <!-- Its important that you keep list attribute empty to hide the default dropdown icon and the browser's default datalist -->
 
                     <datalist id="destinationpointdatalist" role="listbox"  class="starting-point-datalist" name = "destinationpoint">
-                        <option value="My location">My Location</option>
                         {% for item in form %} 
                         <option value="{{item.name}}">{{item.name}}</option>
                         {% endfor %}
